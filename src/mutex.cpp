@@ -21,3 +21,7 @@ void cppc::mutex::unlock(){
 bool cppc::mutex::try_lock(){
     return (pthread_mutex_trylock(&this->_mutex)==0);
 }
+
+pthread_mutex_t& cppc::mutex::native_handle(){
+    return _mutex;
+}

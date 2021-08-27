@@ -20,8 +20,24 @@ public:
     void lock();
     void unlock();
     bool try_lock();
+    pthread_mutex_t& native_handle();
 };
 static_assert(rule_traits::is_no_copy_move<mutex>::value);
+
+class condition_variable{
+    pthread_cond_t _cond;
+public:
+    condition_variable();
+    ~condition_variable();
+
+    condition_variable& operator=(condition_variable& that) = delete;
+    condition_variable(condition_variable& that) = delete;
+
+    void notify_one();
+    void notify_all();
+    void wait(mutex& m);
+};
+static_assert(rule_traits::is_no_copy_move<condition_variable>::value);
 
 class lock_guard{
 private:
@@ -39,12 +55,12 @@ static_assert(rule_traits::is_three_move<lock_guard>::value);
 class barrier{
 private:
     std::size_t _current_cnt;
-    std::size_t _reset_point;
-    std::vector<std::shared_ptr<mutex>> _blocked;
+    const std::size_t _reset_point;
+    std::shared_ptr<bool> _ind; 
     mutex _mm;
-
+    condition_variable _cv;
 public:
-    barrier(std::size_t);
+    barrier(const std::size_t);
     ~barrier() = default;
     barrier& operator=(barrier& that) = delete;
     barrier(barrier& that) = delete;
@@ -55,7 +71,20 @@ public:
 };
 static_assert(rule_traits::is_no_copy_move<barrier>::value);
 
-// implement condition variable, fix barrier, implement semaphore
-// implement future & promise paradigms
+class semaphore{
+private:
+    std::size_t counter;
+    mutex _mm;
+    condition_variable _cv;
+public:
+    semaphore() = default;
+    ~semaphore() = default;
+    semaphore& operator=(semaphore& that) = delete;
+    semaphore(semaphore& that) = delete;
+
+    void get();
+    void put(const std::size_t);
+};
+static_assert(rule_traits::is_no_copy_move<semaphore>::value);
 
 }

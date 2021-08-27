@@ -3,49 +3,62 @@
 #include <memory>
 #include <vector>
 
-cppc::barrier::barrier(std::size_t reset_point): _reset_point{reset_point}, _current_cnt{reset_point}{};
+cppc::barrier::barrier(const std::size_t reset_point): 
+    _reset_point{reset_point}, 
+    _current_cnt{reset_point},
+    _ind{std::make_shared<bool>(false)}
+{};
 
 void cppc::barrier::decrement(){
-    lock_guard lg(_mm);
-
+    _mm.lock();
     _current_cnt--;
     if (_current_cnt == 0){
+        *_ind = true;
+        _ind = std::shared_ptr<bool>();
         _current_cnt = _reset_point;
-        for (auto& sp : _blocked){
-            sp->unlock();
-        }
-        _blocked.clear();
+        _cv.notify_all();
     }
+    _mm.unlock();
 }
 
 void cppc::barrier::wait(){
-    auto sp = std::make_shared<mutex>();
-    {
-        lock_guard lg{_mm};
-        _blocked.push_back(sp);
-        sp->lock();
+    _mm.lock();
+    auto my_ind = _ind;
+    
+    while (true){
+        _cv.wait(_mm);
+        if (*my_ind){
+            _mm.unlock();
+            break;
+        }
+        else{
+            _mm.unlock();
+        }
     }
-    sp->lock();
 }
 
 void cppc::barrier::decrement_and_wait(){
-    auto sp = std::make_shared<mutex>();
-    {
-        lock_guard lg{_mm};
-
-        _current_cnt--;
-        if (_current_cnt == 0){
-            _current_cnt = _reset_point;
-            for (auto& sp : _blocked){
-                sp->unlock();
+    _mm.lock();
+    _current_cnt--;
+    if (_current_cnt == 0){
+        *_ind = true;
+        _ind = std::make_shared<bool>(false);
+        _current_cnt = _reset_point;
+        _cv.notify_all();
+        _mm.unlock();
+    }
+    else{
+        auto my_ind = _ind;
+        
+        while (true){
+            _cv.wait(_mm);
+            if (*my_ind){
+                _mm.unlock();
+                break;
             }
-            _blocked.clear();
-        }
-        else{
-            _blocked.push_back(sp);
-            sp->lock();
+            else{
+                _mm.unlock();
+            }
         }
     }
-    sp->lock();
-    sp->unlock();
 }

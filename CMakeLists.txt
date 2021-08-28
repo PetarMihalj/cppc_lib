@@ -21,6 +21,10 @@ link_libraries("pthread")
 
 add_executable("main" "dev/main.cpp" ${SOURCES})
 
+# OPTION: lib
+
+add_library("cppc_lib" ${SOURCES})
+
 # OPTION: tests
 
 enable_testing()

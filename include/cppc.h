@@ -1,3 +1,4 @@
+#include <bits/c++config.h>
 #include <bits/stdint-uintn.h>
 #include <memory>
 #include <pthread.h>
@@ -19,7 +20,6 @@ public:
 
     void lock();
     void unlock();
-    bool try_lock();
     pthread_mutex_t& native_handle();
 };
 static_assert(rule_traits::is_no_copy_move<mutex>::value);
@@ -86,5 +86,27 @@ public:
     void put(const std::size_t);
 };
 static_assert(rule_traits::is_no_copy_move<semaphore>::value);
+
+class shared_mutex{
+    mutex _m;
+    condition_variable _cv;
+    bool _locked;
+    std::size_t _locked_share_count;
+public:
+    shared_mutex() = default;
+    ~shared_mutex() = default;
+
+    shared_mutex& operator=(shared_mutex& that) = delete;
+    shared_mutex(shared_mutex& that) = delete;
+
+    void lock();
+    void unlock();
+
+    void lock_shared();
+    void unlock_shared();
+};
+static_assert(rule_traits::is_no_copy_move<shared_mutex>::value);
+
+
 
 }

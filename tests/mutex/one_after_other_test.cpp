@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 #include <thread>
 
-TEST(mutex_one_after_other, trivial) {
+TEST(mutex, one_after_other) {
     static cppc::mutex m;
     static int a = 0;
 

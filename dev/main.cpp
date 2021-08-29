@@ -4,7 +4,6 @@
 #include <memory>
 
 #include "cppc.h"
-#include "iro.h"
 
 /*
 cppc::barrier b(3);
@@ -38,6 +37,7 @@ int main(){
     return 0;
 }*/
 
+/*
 cppc::semaphore sem;
 
 void f(char c){
@@ -69,7 +69,7 @@ int main(){
     t3.join();
 
     return 0;
-}
+}*/
 
 /*
 cppc::condition_variable cv;
@@ -119,3 +119,40 @@ int main(){
     }
     return 0;
 }*/
+
+cppc::shared_mutex sm;
+
+void f(char c){
+    for (int i=0;i<5;i++){
+        cppc::shared_lock sl(sm);
+        std::cout << c << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+}
+
+void g(){
+    for (int i=0;i<5;i++){
+        cppc::unique_lock sl(sm);
+        std::cout << '#' << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+}
+
+
+int main(){
+    std::thread t1([]()->void{
+        f('a');
+    });
+    std::thread t2([]()->void{
+        f('b');
+    });
+    std::thread t3([]()->void{
+        g();
+    });
+
+    t1.join();
+    t2.join();
+    t3.join();
+
+    return 0;
+}

@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include <type_traits>
 #include <vector>
-#include "iro.h"
+#include "rule_traits.h"
 #include <functional>
 
 namespace cppc{
@@ -39,18 +39,31 @@ public:
 };
 static_assert(rule_traits::is_no_copy_move<condition_variable>::value);
 
-class lock_guard{
+template<typename T>
+class unique_lock{
 private:
-    mutex* _mutex;
+    T* _mutex;
 public:
-    lock_guard(mutex&);
-    lock_guard(const lock_guard&) = delete;
-    lock_guard(lock_guard&&);
-    lock_guard& operator=(const lock_guard&) = delete;
-    lock_guard& operator=(lock_guard&&);
-    ~lock_guard();
+    unique_lock(T&);
+    unique_lock(const unique_lock&) = delete;
+    unique_lock(unique_lock&&);
+    unique_lock& operator=(const unique_lock&) = delete;
+    unique_lock& operator=(unique_lock&&);
+    ~unique_lock();
 };
-static_assert(rule_traits::is_three_move<lock_guard>::value);
+
+template<typename T>
+class shared_lock{
+private:
+    T* _mutex;
+public:
+    shared_lock(T&);
+    shared_lock(const shared_lock&) = delete;
+    shared_lock(shared_lock&&);
+    shared_lock& operator=(const shared_lock&) = delete;
+    shared_lock& operator=(shared_lock&&);
+    ~shared_lock();
+};
 
 class barrier{
 private:

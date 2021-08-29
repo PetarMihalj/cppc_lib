@@ -2,10 +2,6 @@
 #include <bits/stdint-uintn.h>
 #include <memory>
 #include <pthread.h>
-#include <type_traits>
-#include <vector>
-#include "rule_traits.h"
-#include <functional>
 
 namespace cppc{
 
@@ -22,7 +18,6 @@ public:
     void unlock();
     pthread_mutex_t& native_handle();
 };
-static_assert(rule_traits::is_no_copy_move<mutex>::value);
 
 class condition_variable{
     pthread_cond_t _cond;
@@ -37,7 +32,25 @@ public:
     void notify_all();
     void wait(mutex& m);
 };
-static_assert(rule_traits::is_no_copy_move<condition_variable>::value);
+
+class shared_mutex{
+    mutex _m;
+    condition_variable _cv;
+    bool _locked;
+    std::size_t _locked_share_count;
+public:
+    shared_mutex() = default;
+    ~shared_mutex() = default;
+
+    shared_mutex& operator=(shared_mutex& that) = delete;
+    shared_mutex(shared_mutex& that) = delete;
+
+    void lock();
+    void unlock();
+
+    void lock_shared();
+    void unlock_shared();
+};
 
 template<typename T>
 class unique_lock{
@@ -82,7 +95,6 @@ public:
     void wait();
     void decrement_and_wait();
 };
-static_assert(rule_traits::is_no_copy_move<barrier>::value);
 
 class semaphore{
 private:
@@ -98,28 +110,5 @@ public:
     void get();
     void put(const std::size_t);
 };
-static_assert(rule_traits::is_no_copy_move<semaphore>::value);
-
-class shared_mutex{
-    mutex _m;
-    condition_variable _cv;
-    bool _locked;
-    std::size_t _locked_share_count;
-public:
-    shared_mutex() = default;
-    ~shared_mutex() = default;
-
-    shared_mutex& operator=(shared_mutex& that) = delete;
-    shared_mutex(shared_mutex& that) = delete;
-
-    void lock();
-    void unlock();
-
-    void lock_shared();
-    void unlock_shared();
-};
-static_assert(rule_traits::is_no_copy_move<shared_mutex>::value);
-
-
 
 }

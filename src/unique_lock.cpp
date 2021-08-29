@@ -1,4 +1,8 @@
 #include "cppc.h"
+#include "rule_traits.h"
+
+static_assert(rule_traits::is_three_move<cppc::unique_lock<cppc::mutex>>::value);
+static_assert(rule_traits::is_three_move<cppc::unique_lock<cppc::shared_mutex>>::value);
 
 template<typename T>
 cppc::unique_lock<T>::unique_lock(T& m):_mutex(&m){
@@ -21,5 +25,3 @@ cppc::unique_lock<T>& cppc::unique_lock<T>::operator=(cppc::unique_lock<T>&& tha
 
 template class cppc::unique_lock<cppc::mutex>;
 template class cppc::unique_lock<cppc::shared_mutex>;
-static_assert(rule_traits::is_three_move<cppc::unique_lock<cppc::mutex>>::value);
-static_assert(rule_traits::is_three_move<cppc::unique_lock<cppc::shared_mutex>>::value);

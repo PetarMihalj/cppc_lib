@@ -1,4 +1,7 @@
 #include "cppc.h"
+#include "rule_traits.h"
+
+static_assert(rule_traits::is_no_copy_move<cppc::shared_mutex>::value);
 
 void cppc::shared_mutex::lock(){
     _m.lock();

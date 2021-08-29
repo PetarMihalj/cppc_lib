@@ -2,6 +2,9 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include "rule_traits.h"
+
+static_assert(rule_traits::is_no_copy_move<cppc::barrier>::value);
 
 cppc::barrier::barrier(const std::size_t reset_point): 
     _reset_point{reset_point}, 

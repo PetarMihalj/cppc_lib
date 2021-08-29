@@ -1,6 +1,9 @@
 #include "cppc.h"
 #include <cstddef>
 #include <pthread.h>
+#include "rule_traits.h"
+
+static_assert(rule_traits::is_no_copy_move<cppc::condition_variable>::value);
 
 cppc::condition_variable::condition_variable(){
     pthread_cond_init(&_cond, NULL);

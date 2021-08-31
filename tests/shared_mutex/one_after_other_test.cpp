@@ -7,13 +7,13 @@ TEST(shared_mutex, one_after_other) {
     static int a = 0;
 
     sm.lock();
-    std::thread t2([&]()->void{
+    std::thread t2([&]() -> void {
         sm.lock_shared();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         a = 2;
         sm.unlock_shared();
     });
-    std::thread t3([&]()->void{
+    std::thread t3([&]() -> void {
         sm.lock_shared();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         sm.unlock_shared();

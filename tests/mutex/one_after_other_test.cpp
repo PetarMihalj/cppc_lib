@@ -7,7 +7,7 @@ TEST(mutex, one_after_other) {
     static int a = 0;
 
     m.lock();
-    std::thread t2([&]()->void{
+    std::thread t2([&]() -> void {
         m.lock();
         a = 2;
         m.unlock();

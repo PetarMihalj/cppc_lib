@@ -6,9 +6,9 @@ TEST(barrier, release) {
     static cppc::barrier b(10);
     static std::vector<int> r;
     static cppc::mutex m;
-    static std::vector<std::thread*> tv;
-    for (int i=0;i<5;i++){
-        tv.push_back(new std::thread([&]()->void{
+    static std::vector<std::thread *> tv;
+    for (int i = 0; i < 5; i++) {
+        tv.push_back(new std::thread([&]() -> void {
             b.wait();
             m.lock();
             r.push_back(2);
@@ -16,8 +16,8 @@ TEST(barrier, release) {
         }));
     }
 
-    for (int i=0;i<5;i++){
-        tv.push_back(new std::thread([&]()->void{
+    for (int i = 0; i < 5; i++) {
+        tv.push_back(new std::thread([&]() -> void {
             m.lock();
             r.push_back(1);
             m.unlock();
@@ -26,17 +26,18 @@ TEST(barrier, release) {
             r.push_back(2);
             m.unlock();
         }));
-        tv.push_back(new std::thread([&]()->void{
+        tv.push_back(new std::thread([&]() -> void {
             m.lock();
             r.push_back(1);
             m.unlock();
             b.decrement();
         }));
     }
-    for (auto t:tv) t->join();
+    for (auto t : tv)
+        t->join();
 
-    for (int i=0;i<10;i++)
+    for (int i = 0; i < 10; i++)
         ASSERT_EQ(r[i], 1);
-    for (int i=10;i<20;i++)
+    for (int i = 10; i < 20; i++)
         ASSERT_EQ(r[i], 2);
 }

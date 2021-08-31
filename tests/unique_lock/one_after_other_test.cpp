@@ -5,12 +5,12 @@
 TEST(unique_lock, one_after_other) {
     static cppc::mutex m;
     static int a = 0;
-    std::thread* t2;
+    std::thread *t2;
 
     {
         cppc::unique_lock<cppc::mutex> ul(m);
 
-        t2 = new std::thread([&]()->void{
+        t2 = new std::thread([&]() -> void {
             cppc::unique_lock<cppc::mutex> ul(m);
             a = 2;
         });

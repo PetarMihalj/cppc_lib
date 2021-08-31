@@ -6,16 +6,17 @@
 
 namespace cppc {
 
-// Interface to the mutex primitive. Mutex is mostly allocated in static/process level context,
-// so that multiple threads can access it at the same time. An alternative is to share a pointer
-// to stack or heap memory.
-//  
+// Interface to the mutex primitive. Mutex is mostly allocated in static/process
+// level context, so that multiple threads can access it at the same time. An
+// alternative is to share a pointer to stack or heap memory.
+//
 // Beware:
 // - A thread which locks the mutex should be the one to unlock it, UB otherwise
 // - Destruction of locked mutex results in UB
 class mutex {
   private:
     pthread_mutex_t _mutex;
+
   public:
     mutex();
     ~mutex();
@@ -28,10 +29,11 @@ class mutex {
 };
 
 // Interface to the condition variable primitive.
-// Condition variables are used in conjuction with mutexes, and allow for implementation
-// of complex synchronization primitives.
+// Condition variables are used in conjuction with mutexes, and allow for
+// implementation of complex synchronization primitives.
 //
-// Check out https://www.cplusplus.com/reference/condition_variable/condition_variable/wait/
+// Check out
+// https://www.cplusplus.com/reference/condition_variable/condition_variable/wait/
 // for use cases.
 class condition_variable {
     pthread_cond_t _cond;
@@ -58,7 +60,7 @@ class condition_variable {
     void wait(mutex &m);
 };
 
-// A shared mutex is a mutex which can be locked either 
+// A shared mutex is a mutex which can be locked either
 // 1) exclusively (lock / unlock)
 // 2) non-exclusively (lock_shared / unlock_shared)
 //
@@ -67,7 +69,7 @@ class condition_variable {
 // aquire it.
 //
 // Beware:
-// - A thread which aquires the exclusive lock should be the one 
+// - A thread which aquires the exclusive lock should be the one
 //   to unlock it, UB otherwise.
 // - Only the threads which aquire the shared lock should be the ones
 //   to unlock it, UB otherwise.
@@ -115,7 +117,7 @@ template <typename T> class unique_lock {
 };
 
 // Implements a lifetime-based **non-exclusive** locking mechanism.
-// Pass it a reference to a **shared_mutex**, 
+// Pass it a reference to a **shared_mutex**,
 // and it will aquire it upon construction,
 // and release it upon destruction.
 //

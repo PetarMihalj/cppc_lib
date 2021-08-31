@@ -8,17 +8,16 @@ TEST(condition_variable, all_release) {
     static int a = 1;
     static bool go = false;
 
-    std::vector<std::thread*> vt;
-    for (int i=0;i<5;i++){
-        vt.push_back(new std::thread([&]()->void{
+    std::vector<std::thread *> vt;
+    for (int i = 0; i < 5; i++) {
+        vt.push_back(new std::thread([&]() -> void {
             m.lock();
-            while (true){
-                if (go){
+            while (true) {
+                if (go) {
                     a++;
                     m.unlock();
                     break;
-                }
-                else{
+                } else {
                     cv.wait(m);
                 }
             }
@@ -28,9 +27,8 @@ TEST(condition_variable, all_release) {
     a = 0;
     go = true;
     cv.notify_all();
-    for (auto tp : vt){
+    for (auto tp : vt) {
         tp->join();
-
     }
     ASSERT_EQ(a, 5);
 }

@@ -28,7 +28,7 @@ add_library("cppc_lib" ${SOURCES})
 # OPTION: tests
 
 enable_testing()
-file(GLOB_RECURSE TESTFILES ${PROJECT_SOURCE_DIR}/tests *_test.cpp)
+file(GLOB_RECURSE TESTFILES ${PROJECT_SOURCE_DIR}/tests/*_test.cpp)
 add_executable(run_tests ${TESTFILES} ${SOURCES})
 target_link_libraries(run_tests gtest_main)
 include(GoogleTest)

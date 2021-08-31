@@ -34,9 +34,6 @@ void cppc::barrier::wait(){
             _mm.unlock();
             break;
         }
-        else{
-            _mm.unlock();
-        }
     }
 }
 
@@ -58,9 +55,6 @@ void cppc::barrier::decrement_and_wait(){
             if (*my_ind){
                 _mm.unlock();
                 break;
-            }
-            else{
-                _mm.unlock();
             }
         }
     }

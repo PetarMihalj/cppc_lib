@@ -10,7 +10,7 @@ void cppc::shared_mutex::lock(){
         if (_locked_share_count == 0 && !_locked){
             _locked = true;
             _m.unlock();
-            return;
+            break;
         }
         else{
             _cv.wait(_m);
@@ -32,7 +32,7 @@ void cppc::shared_mutex::lock_shared(){
         if (!_locked){
             _locked_share_count += 1;
             _m.unlock();
-            return;
+            break;
         }
         else{
             _cv.wait(_m);

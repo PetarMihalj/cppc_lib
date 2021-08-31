@@ -124,7 +124,7 @@ cppc::shared_mutex sm;
 
 void f(char c) {
     for (int i = 0; i < 5; i++) {
-        cppc::shared_lock sl(sm);
+        cppc::shared_lock<cppc::shared_mutex> sl(sm);
         std::cout << c << std::flush;
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
@@ -132,7 +132,7 @@ void f(char c) {
 
 void g() {
     for (int i = 0; i < 5; i++) {
-        cppc::unique_lock sl(sm);
+        cppc::unique_lock<cppc::shared_mutex> sl(sm);
         std::cout << '#' << std::flush;
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }

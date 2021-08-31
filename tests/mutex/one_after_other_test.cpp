@@ -3,8 +3,8 @@
 #include <thread>
 
 TEST(mutex, one_after_other) {
-    static cppc::mutex m;
-    static int a = 0;
+    cppc::mutex m{};
+    int a = 0;
 
     m.lock();
     std::thread t2([&]() -> void {

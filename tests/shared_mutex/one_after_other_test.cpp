@@ -1,10 +1,11 @@
 #include "cppc.h"
 #include "gtest/gtest.h"
 #include <thread>
+#include <iostream>
 
 TEST(shared_mutex, one_after_other) {
-    static cppc::shared_mutex sm;
-    static int a = 0;
+    cppc::shared_mutex sm{};
+    int a = 0;
 
     sm.lock();
     std::thread t2([&]() -> void {

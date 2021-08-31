@@ -3,10 +3,10 @@
 #include <thread>
 
 TEST(condition_variable, all_release) {
-    static cppc::mutex m;
-    static cppc::condition_variable cv;
-    static int a = 1;
-    static bool go = false;
+    cppc::mutex m{};
+    cppc::condition_variable cv{};
+    int a = 1;
+    bool go = false;
 
     std::vector<std::thread *> vt;
     for (int i = 0; i < 5; i++) {

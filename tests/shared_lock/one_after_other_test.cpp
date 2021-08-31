@@ -3,8 +3,8 @@
 #include <thread>
 
 TEST(shared_lock, one_after_other) {
-    static cppc::shared_mutex sm;
-    static int a = 0;
+    cppc::shared_mutex sm{};
+    int a = 0;
     std::thread *t2;
 
     {

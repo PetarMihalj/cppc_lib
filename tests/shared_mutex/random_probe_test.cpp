@@ -7,13 +7,10 @@
 namespace {
 std::default_random_engine generator;
 std::uniform_int_distribution<int> distribution(1000, 2000);
-
 std::atomic<int> cnt_unique;
 std::atomic<int> cnt_shared;
 
-cppc::shared_mutex sm;
-
-void act_unique() {
+void act_unique(cppc::shared_mutex& sm) {
     for (int i = 0; i < 10; i++) {
         std::this_thread::sleep_for(
             std::chrono::microseconds(distribution(generator)));
@@ -36,7 +33,7 @@ void act_unique() {
     }
 }
 
-void act_shared() {
+void act_shared(cppc::shared_mutex& sm) {
     for (int i = 0; i < 10; i++) {
         std::this_thread::sleep_for(
             std::chrono::microseconds(distribution(generator)));
@@ -61,12 +58,16 @@ void act_shared() {
 } // namespace
 
 TEST(shared_mutex, random_probe) {
-    // generator.seed(6);
-    //
+    generator = std::default_random_engine();
+    cnt_unique = 0;
+    cnt_shared = 0;
+    cppc::shared_mutex sm{};
+
+
     std::vector<std::thread> t;
     for (int i = 0; i < 10; i++) {
-        t.emplace_back([]() { act_shared(); });
-        t.emplace_back([]() { act_unique(); });
+        t.emplace_back([&]() { act_shared(sm); });
+        t.emplace_back([&]() { act_unique(sm); });
     }
 
     for (auto &th : t)

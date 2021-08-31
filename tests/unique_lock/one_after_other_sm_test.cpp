@@ -3,8 +3,8 @@
 #include <thread>
 
 TEST(unique_lock, one_after_other_sm) {
-    static cppc::shared_mutex sm;
-    static int a = 0;
+    cppc::shared_mutex sm{};
+    int a = 0;
     std::thread *t2;
 
     {

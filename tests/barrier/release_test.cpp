@@ -3,10 +3,10 @@
 #include <thread>
 
 TEST(barrier, release) {
-    static cppc::barrier b(10);
-    static std::vector<int> r;
-    static cppc::mutex m;
-    static std::vector<std::thread *> tv;
+    cppc::barrier b(10);
+    std::vector<int> r;
+    cppc::mutex m{};
+    std::vector<std::thread *> tv;
     for (int i = 0; i < 5; i++) {
         tv.push_back(new std::thread([&]() -> void {
             b.wait();
